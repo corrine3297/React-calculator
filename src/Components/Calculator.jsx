@@ -4,14 +4,43 @@ import React, { useState } from 'react'
 function Calculator() {
     const [result, setResult] = useState('');
     const [input, setInput] = useState('');
+    const operators = ['.', '+', '-', '/', '*']
     const getValue = (value) => {
-        if (value != '') {
-            setInput(input + value.toString())
-        }
-        if (value === '=') {
-            console.log(eval(input).toString())
-            setResult(eval(input).toString())
-            // setInput('')
+        try {
+            if (value != '' || value != 'DEL') {
+                const inputArray = input.split('')
+                console.log(inputArray)
+                if (!(inputArray.includes(value) && operators.includes(value)) && value != input.slice(0, -1)) {
+                    setInput(input + value.toString())
+                }
+
+                if (operators.includes(value) && result != '') {
+                    setInput(result + value.toString())
+                    setResult('')
+                }
+            }
+            if (value === '=') {
+                // console.log(eval(input).toString())
+                setResult(eval(input).toString())
+                // setInput('')
+            }
+            else if (value === 'C') {
+                setInput('')
+                setResult('')
+            }
+            else if (value === 'DEL') {
+
+                setInput(input.slice(0, -1))
+                setResult('')
+
+            }
+            if (result != '' && (value === '0' || value === '00')) {
+                setInput('')
+                setResult('')
+            }
+        } catch {
+            setInput('')
+            setResult('Invaild expression')
         }
 
     }
@@ -21,13 +50,13 @@ function Calculator() {
             <h3 className='text-center mt-5'>
                 Calculator
             </h3>
-            <div className='mt-5 border rounded p-3'  >
+            <div className='mt-5 border bg-dark rounded p-3' style={{color:'white'}}  >
                 <div className='p-3 border rounded'>
-                    { result!=""? 
-                    <input type="text" value={input} />
-                    :
-                    <input type="text" value={result} />
-                    }
+                    <span className='p-2'>
+                        {input}
+                    </span>
+                    {result != '' && <span>{result}
+                    </span>}
                 </div>
                 <div className='mt-2'>
                     <Button className='m-1' onClick={() => getValue('C')} variant="contained">C</Button>
